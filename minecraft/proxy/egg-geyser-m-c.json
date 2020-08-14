@@ -1,0 +1,54 @@
+{
+    "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+    "meta": {
+        "version": "PTDL_v1"
+    },
+    "exported_at": "2020-08-14T16:17:45+02:00",
+    "name": "GeyserMC",
+    "author": "justin@klerk.nl",
+    "description": "Enable clients from Minecraft Bedrock Edition to join your Minecraft Java server.\r\n\r\nhttps:\/\/geysermc.org\/",
+    "image": "quay.io\/pterodactyl\/core:java-glibc",
+    "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -jar {{SERVER_JARFILE}}",
+    "config": {
+        "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"adress\": \"0.0.0.0\",\r\n            \"port\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
+        "startup": "{\r\n    \"done\": \")!\"\r\n}",
+        "logs": "{\r\n    \"custom\": false,\r\n    \"location\": \"logs\/latest.log\"\r\n}",
+        "stop": "geyser stop"
+    },
+    "scripts": {
+        "installation": {
+            "script": "#!\/bin\/ash\r\n# Geyser Installation Script\r\n#\r\n# Server Files: \/mnt\/server\r\napk update\r\napk add curl\r\ncd \/mnt\/server\r\nif [ -z \"${GEYSER_VERSION}\" ] || [ \"${GEYSER_VERSION}\" == \"latest\" ]; then\r\nGEYSER_VERSION=\"lastSuccessfulBuild\"\r\nfi\r\ncurl -o ${SERVER_JARFILE} https:\/\/ci.nukkitx.com\/job\/GeyserMC\/job\/Geyser\/job\/${GYSER_BRANCHES}\/${GEYSER_VERSION}\/artifact\/bootstrap\/standalone\/target\/Geyser.jar",
+            "container": "alpine:3.4",
+            "entrypoint": "ash"
+        }
+    },
+    "variables": [
+        {
+            "name": "Server Jar File",
+            "description": "The name of the server jarfile to run the server with.",
+            "env_variable": "SERVER_JARFILE",
+            "default_value": "geyser.jar",
+            "user_viewable": 1,
+            "user_editable": 1,
+            "rules": "required|regex:\/^([\\w\\d._-]+)(\\.jar)$\/"
+        },
+        {
+            "name": "Geyser Version",
+            "description": "Build number for all Branches\r\n\r\n(the master build ) https:\/\/ci.nukkitx.com\/job\/GeyserMC\/job\/Geyser\/job\/master\/",
+            "env_variable": "GEYSER_VERSION",
+            "default_value": "latest",
+            "user_viewable": 1,
+            "user_editable": 1,
+            "rules": "required|alpha_num|between:1,100"
+        },
+        {
+            "name": "Geyser Build Branches",
+            "description": "Different types of Geyser Branches with different features\r\n\r\n(list of all Branches )https:\/\/ci.nukkitx.com\/job\/GeyserMC\/job\/Geyser\/",
+            "env_variable": "GYSER_BRANCHES",
+            "default_value": "master",
+            "user_viewable": 1,
+            "user_editable": 1,
+            "rules": "required|string|max:25"
+        }
+    ]
+}
